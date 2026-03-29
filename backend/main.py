@@ -287,6 +287,16 @@ async def impact_scores(req: ActionRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/newsroom/{role}")
+async def get_newsroom_feed(role: str):
+    logger.info("GET /newsroom — populating personalized feed for %s", role)
+    try:
+        articles = llm.generate_personalized_newsroom(role)
+        return {"articles": articles}
+    except Exception as e:
+        logger.exception("Error generating personalized newsroom")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.delete("/session/{session_id}")
 async def delete_session(session_id: str):
     """Clean up a session."""

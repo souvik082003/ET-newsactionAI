@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Shield, Users, Mic, Newspaper, Globe, Film, TrendingUp } from 'lucide-react';
 import ArticleInput from '../components/ArticleInput';
+import MyETNewsroom from '../components/MyETNewsroom';
 
 const FEATURES = [
   { icon: <Newspaper size={22} />, title: 'My ET — Personalized Newsroom', desc: 'A fundamentally different news experience per role. Investors get portfolio-relevant stories, students get explainer-first content.' },
@@ -18,6 +20,8 @@ const HIGHLIGHTS = [
 ];
 
 export default function Home({ onSubmit, isLoading }) {
+  const [selectedRole, setSelectedRole] = useState('');
+
   return (
     <div className="fade-up">
       {/* Hero */}
@@ -60,7 +64,10 @@ export default function Home({ onSubmit, isLoading }) {
       </div>
 
       {/* Input */}
-      <ArticleInput onSubmit={onSubmit} isLoading={isLoading} />
+      <ArticleInput onSubmit={onSubmit} isLoading={isLoading} onRoleSelect={setSelectedRole} />
+
+      {/* Dynamic Newsroom Dashboard - Shown only when role is selected */}
+      {selectedRole && <MyETNewsroom role={selectedRole} />}
 
       {/* ── WHAT WE BUILD ── */}
       <div className="mt-16 mb-8">

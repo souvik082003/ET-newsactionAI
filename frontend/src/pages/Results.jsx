@@ -19,8 +19,9 @@ import CognitiveLoadBadge from '../components/CognitiveLoadBadge';
 import QuestionSuggester from '../components/QuestionSuggester';
 import BiasDetector from '../components/BiasDetector';
 import CredibilityChecker from '../components/CredibilityChecker';
+import VideoStudio from '../components/VideoStudio';
 
-import { Download, Copy, Target, Loader2 } from 'lucide-react';
+import { Download, Copy, Target, Loader2, PlayCircle } from 'lucide-react';
 
 const API = 'http://localhost:8000';
 
@@ -40,6 +41,9 @@ export default function Results({ articleInfo, actions, storyArc, role, sessionI
   const [loadingBias, setLoadingBias] = useState(false);
   const [credibilityData, setCredibilityData] = useState(null);
   const [loadingCredibility, setLoadingCredibility] = useState(false);
+
+  // Video Studio State
+  const [showVideo, setShowVideo] = useState(false);
 
   // CustomQuery external trigger
   const [customQueryInput, setCustomQueryInput] = useState("");
@@ -156,21 +160,25 @@ export default function Results({ articleInfo, actions, storyArc, role, sessionI
   };
 
   return (
-    <div className="fade-up space-y-0 relative" id="pdf-export-area">
-      
-      {/* 1. ArticleSummaryBar */}
-      <ArticleSummaryBar
-        title={articleInfo?.title} wordCount={articleInfo?.word_count}
-        summary={articleInfo?.summary} role={role} onReset={onReset}
-      />
+    <>
+      <div className="fade-up space-y-0 relative" id="pdf-export-area">
+        
+        {/* 1. ArticleSummaryBar */}
+        <ArticleSummaryBar
+          title={articleInfo?.title} wordCount={articleInfo?.word_count}
+          summary={articleInfo?.summary} role={role} onReset={onReset}
+        />
 
-      {/* Toolbar (Top Right) */}
-      <div className="flex flex-wrap justify-end gap-2 my-4 no-pdf">
-        {!biasData && <button onClick={fetchBias} disabled={loadingBias} className="btn-ghost text-xs">🔍 Bias Analysis</button>}
-        {!credibilityData && <button onClick={fetchCredibility} disabled={loadingCredibility} className="btn-ghost text-xs">🛡️ Check Credibility</button>}
-        <ShareButton articleInfo={articleInfo} actions={actions} />
-        <button onClick={handleCopy} className="btn-ghost text-xs" aria-label="Copy">📋 Copy</button>
-      </div>
+        {/* Toolbar (Top Right) */}
+        <div className="flex flex-wrap justify-end gap-2 my-4 no-pdf">
+          <button onClick={() => setShowVideo(true)} className="btn-ghost text-xs text-orange-400 hover:text-orange-300 font-bold border-orange-500/30 bg-orange-500/10">
+            <PlayCircle size={14} className="inline mr-1"/> AI Video Studio
+          </button>
+          {!biasData && <button onClick={fetchBias} disabled={loadingBias} className="btn-ghost text-xs">🔍 Bias Analysis</button>}
+          {!credibilityData && <button onClick={fetchCredibility} disabled={loadingCredibility} className="btn-ghost text-xs">🛡️ Check Credibility</button>}
+          <ShareButton articleInfo={articleInfo} actions={actions} />
+          <button onClick={handleCopy} className="btn-ghost text-xs" aria-label="Copy">📋 Copy</button>
+        </div>
 
       {/* Render Bias / Credibility if fetched */}
       {(loadingBias || biasData) && <BiasDetector biasData={biasData} loading={loadingBias} onAnalyze={fetchBias} />}
@@ -226,5 +234,14 @@ export default function Results({ articleInfo, actions, storyArc, role, sessionI
         </button>
       </div>
     </div>
+    
+    {showVideo && (
+      <VideoStudio 
+        articleInfo={articleInfo} 
+        actions={actions} 
+        onClose={() => setShowVideo(false)} 
+      />
+    )}
+    </>
   );
 }

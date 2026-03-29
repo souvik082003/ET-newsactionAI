@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Globe, ChevronDown, Loader2, Volume2, VolumeX } from 'lucide-react';
-import { useVoice } from '../hooks/useVoice';
+import { Globe, ChevronDown, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
 const API = 'http://localhost:8000';
@@ -19,7 +18,6 @@ export default function VernacularPanel({ actions }) {
   const [language, setLanguage] = useState('');
   const [translated, setTranslated] = useState('');
   const [loading, setLoading] = useState(false);
-  const { speak, stopSpeaking, isSpeaking } = useVoice();
 
   if (!actions) return null;
 
@@ -28,7 +26,6 @@ export default function VernacularPanel({ actions }) {
     setLoading(true);
     setTranslated('');
     try {
-      // Combine all 4 action cards into one text block
       const allText = [
         `Who's Affected:\n${actions.affected || ''}`,
         `What It Means:\n${actions.meaning || ''}`,
@@ -88,11 +85,6 @@ export default function VernacularPanel({ actions }) {
                       <span className="badge bg-orange-500/10 text-orange-300 border border-orange-500/20">
                         {language}
                       </span>
-                      <button onClick={() => isSpeaking ? stopSpeaking() : speak(translated)}
-                        className={`btn-ghost text-xs ${isSpeaking ? 'mic-pulse' : ''}`}
-                        aria-label={isSpeaking ? 'Stop' : 'Read translated text'}>
-                        {isSpeaking ? <><VolumeX size={12}/> Stop</> : <><Volume2 size={12}/> Read</>}
-                      </button>
                     </div>
                     <div className="text-sm text-slate-300/90 leading-relaxed whitespace-pre-line">{translated}</div>
                   </div>

@@ -23,6 +23,11 @@ Business news in 2026 is still delivered like 2005 — static text, one-size-fit
 | 📥 Export Reports | Download analysis as a text file |
 | 💬 Custom Questions | Ask anything about the article with full Q&A history |
 
+## Key Documentation
+
+- 📊 **[Impact Model & Business Case](./impact.md)**: Detailed breakdown of the monetization, user adoption strategy, and problem-solution fit.
+- 🏗️ **[System Architecture](./architecture.md)**: Deep dive into the RAG pipeline, LLM integration, and component architecture.
+
 ## Tech Stack
 
 | Layer | Technology |

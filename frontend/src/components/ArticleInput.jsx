@@ -10,7 +10,7 @@ const TABS = [
   { label: 'Upload PDF', icon: <Upload size={15}/> },
 ];
 
-export default function ArticleInput({ onSubmit, isLoading }) {
+export default function ArticleInput({ onSubmit, isLoading, onRoleSelect }) {
   const [tab, setTab] = useState(0);
   const [role, setRole] = useState('');
   const [url, setUrl] = useState('');
@@ -100,7 +100,10 @@ export default function ArticleInput({ onSubmit, isLoading }) {
 
       {/* Role */}
       <div className="mb-6">
-        <RoleSelector selectedRole={role} onRoleChange={setRole} />
+        <RoleSelector selectedRole={role} onRoleChange={(r) => {
+          setRole(r);
+          if (onRoleSelect) onRoleSelect(r);
+        }} />
       </div>
 
       {/* Submit */}
