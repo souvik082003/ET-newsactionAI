@@ -8,7 +8,7 @@
 </div>
 <br>
 
-> **Turn News Into Action. For Everyone.**
+> **Turn News Into Action. For Everyone**
 
 ## 💡 Inspiration: The Problem
 Business news in 2026 is still delivered exactly like it was in 2005 — static text, full of heavy jargon, providing a one-size-fits-all experience. When the RBI changes repo rates, a **student**, a **startup founder**, and a **retail investor** all read the exact same 800-word article, leaving them to manually figure out: *"What does this mean for ME?"*
