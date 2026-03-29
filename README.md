@@ -20,6 +20,35 @@ For thousands of Indian readers—especially PWD users or non-English speakers�
 
 Instead of reading 8 separate articles, users land on the **My ET Newsroom** and immediately receive a personalized briefing tailored perfectly to their specific persona (e.g. Job Seeker, Investor).
 
+## Why This Project Wins
+
+Traditional news platforms deliver **information**.  
+**ET NewsAction AI delivers decisions.**
+
+Most news readers struggle to translate headlines into real-world actions.  
+Our system bridges that gap by transforming static articles into **personalized, role-specific guidance** that users can immediately act on.
+
+### What Makes ET NewsAction AI Different
+
+- **Action-Oriented Intelligence**  
+  Instead of summaries, the system generates clear next steps tailored to each user's role.
+
+- **Grounded, Explainable AI**  
+  Every response is generated using Retrieval-Augmented Generation (RAG), ensuring outputs are based strictly on the source article — reducing hallucinations and improving trust.
+
+- **Role-Based Personalization at Scale**  
+  The same article produces different guidance for students, investors, job seekers, and business owners.
+
+- **Accessibility by Design (Not Afterthought)**  
+  Built with PWD-first principles including voice interaction, dyslexia-friendly typography, and WCAG-compliant contrast modes.
+
+- **From News Consumption to Decision Support**  
+  The platform shifts news from passive reading to active planning and awareness.
+
+### In One Line
+
+**ET NewsAction AI converts news into actionable intelligence — personalized, accessible, and grounded in real data.**
+
 ## ⭐ Key Features We Built for PS8
 
 | Feature | Description |
