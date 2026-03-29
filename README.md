@@ -1,10 +1,10 @@
 # ET NewsAction AI — ET Hackathon 2026 (PS8)
 
 <div align="center">
-  <a href="./README.md"><strong>📖 Readme</strong></a> &nbsp;&nbsp;|&nbsp;&nbsp;
-  <a href="./architecture.md"><strong>🏗️ Architecture</strong></a> &nbsp;&nbsp;|&nbsp;&nbsp;
-  <a href="./impact.md"><strong>📊 Impact Model</strong></a> &nbsp;&nbsp;|&nbsp;&nbsp;
-  <a href="https://youtu.be/your-video-link"><strong>🎥 Video Pitch</strong></a>
+  <a href="./architecture.md"><img src="https://img.shields.io/badge/Architecture-View%20Doc-blue?style=for-the-badge&logo=gitbook" alt="Architecture"></a>
+  <a href="./impact.md"><img src="https://img.shields.io/badge/Impact%20Model-View%20Doc-success?style=for-the-badge&logo=googledocs" alt="Impact Model"></a>
+  <a href="./CONTRIBUTING.md"><img src="https://img.shields.io/badge/Contributing-Guidelines-orange?style=for-the-badge&logo=github" alt="Contributing"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License"></a>
 </div>
 <br>
 
