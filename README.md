@@ -18,6 +18,35 @@ Business news in 2026 is still delivered like 2005 — static text, one-size-fit
 
 **ET NewsAction AI** takes any ET news article (URL, pasted text, or PDF) and transforms it into **structured, actionable guidance** personalized by user role — powered by a RAG pipeline that ensures every response is grounded in the actual article. Zero hallucination.
 
+## Why This Project Wins
+
+Traditional news platforms deliver **information**.  
+**ET NewsAction AI delivers decisions.**
+
+Most news readers struggle to translate headlines into real-world actions.  
+Our system bridges that gap by transforming static articles into **personalized, role-specific guidance** that users can immediately act on.
+
+### What Makes ET NewsAction AI Different
+
+- **Action-Oriented Intelligence**  
+  Instead of summaries, the system generates clear next steps tailored to each user's role.
+
+- **Grounded, Explainable AI**  
+  Every response is generated using Retrieval-Augmented Generation (RAG), ensuring outputs are based strictly on the source article — reducing hallucinations and improving trust.
+
+- **Role-Based Personalization at Scale**  
+  The same article produces different guidance for students, investors, job seekers, and business owners.
+
+- **Accessibility by Design (Not Afterthought)**  
+  Built with PWD-first principles including voice interaction, dyslexia-friendly typography, and WCAG-compliant contrast modes.
+
+- **From News Consumption to Decision Support**  
+  The platform shifts news from passive reading to active planning and awareness.
+
+### In One Line
+
+**ET NewsAction AI converts news into actionable intelligence — personalized, accessible, and grounded in real data.**
+
 ## Features
 
 | Feature | Description |
