@@ -18,18 +18,18 @@ Business news in 2026 is still delivered like 2005 — static text, one-size-fit
 
 **ET NewsAction AI** takes any ET news article (URL, pasted text, or PDF) and transforms it into **structured, actionable guidance** personalized by user role — powered by a RAG pipeline that ensures every response is grounded in the actual article. Zero hallucination.
 
-## Features
+## Features Completed
 
 | Feature | Description |
 |---------|-------------|
-| 🤖 RAG Pipeline | Retrieval-Augmented Generation ensures answers come only from the article |
-| 👥 Role-Based Actions | Personalized for: Student, Investor, Job Seeker, Business Owner, General Reader |
-| ♿ PWD-First Accessibility | High contrast, large text, dyslexia font, voice I/O, reduced motion |
-| 📰 Story Arc Tracker | Background, current events, key players, sentiment, what to watch next |
-| 🎤 Voice Input/Output | Browser-native TTS (read aloud) and STT (speak questions) |
-| 📱 PWA Support | Installable as a mobile/desktop app |
-| 📥 Export Reports | Download analysis as a text file |
-| 💬 Custom Questions | Ask anything about the article with full Q&A history |
+| 📰 **My ET Newsroom** | A personalized homepage dashboard that dynamically rewrites the top 4 breaking news headlines specifically tailored for your selected role. |
+| 🎬 **AI Video Studio** | Generates an auto-playing broadcast slide-deck of the story arc, complete with physical AI text-to-speech auto-narration. |
+| 🤖 **RAG Pipeline** | Retrieval-Augmented Generation ensures answers come only from the article. |
+| 👥 **Role-Based Actions** | Highly structured action plans personalized for: Student, Investor, Job Seeker, General. |
+| 🌍 **Vernacular Engine** | Native semantic translation of the article actions into regional Indian languages without losing contextual framing. |
+| ♿ **PWD-First Accessibility**| Includes Dyslexia fonts, standard High Contrast modes, reduced motion switches, and deep screen-reader ARIA label support. |
+| 📈 **Story Arc Tracker** | Tracks the timeline context, sentiment shifts, and future predictions of any pasted story. |
+| 💬 **Interactive Briefing**| Ask limitless custom follow-up questions directly to the underlying article PDF/URL. |
 
 ## Key Documentation
 
@@ -42,16 +42,16 @@ Business news in 2026 is still delivered like 2005 — static text, one-size-fit
 |-------|-----------|
 | Frontend | React 18 (Vite), Tailwind CSS, Framer Motion, Lucide Icons |
 | Backend | Python FastAPI |
-| LLM | Google Gemini 2.5 Flash via google-genai SDK |
+| LLM | Google Gemini 2.5 Flash Lite via google-genai SDK |
 | Embeddings | sentence-transformers (all-MiniLM-L6-v2) |
 | Vector DB | ChromaDB (in-memory) |
 | Scraping | newspaper3k + BeautifulSoup |
 | PDF Parsing | PyMuPDF (fitz) |
-| Voice | Web Speech API (browser-native TTS + STT) |
+| Voice | Web Speech API (browser-native TTS auto-narration) |
 
 ## Architecture
 
-```
+```text
 User → [React PWA Frontend]
          ↓ REST API (FastAPI)
     ┌────┴────────────────────┐
@@ -60,11 +60,11 @@ User → [React PWA Frontend]
     └────┬────────────────────┘
          ↓ Retrieved chunks
       LLM Engine
-   (Gemini 2.5 Flash)
+   (Gemini 2.5 Lite)
          ↓
     Structured Action Response
          ↓
-    [React Frontend — renders cards]
+    [React Frontend — renders Dashboard & Studio]
 ```
 
 ## Setup Instructions
@@ -94,6 +94,7 @@ Open **http://localhost:5173** in your browser.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
+| GET | `/newsroom/{role}`| Fetch dynamic role-rewritten home dashboard mock feed |
 | POST | `/process` | Process article from URL/text/PDF |
 | POST | `/actions` | Generate 4 standard action cards |
 | POST | `/query` | Ask a custom question (RAG) |
@@ -101,24 +102,13 @@ Open **http://localhost:5173** in your browser.
 | DELETE | `/session/{id}` | Clean up session |
 | GET | `/health` | Health check |
 
-## Accessibility Features
-
-1. **High Contrast Mode** — Black background with gold text (WCAG AAA)
-2. **Large Text Mode** — 1.25em upscaling with increased line height
-3. **Dyslexia Font** — OpenDyslexic font with increased letter spacing
-4. **Reduced Motion** — Disables all animations
-5. **Voice I/O** — Read any card aloud (TTS), speak questions (STT)
-6. **Focus Highlight** — 4px orange focus rings for keyboard navigation
-7. **Skip to Content** — Screen reader skip link
-8. **ARIA Labels** — Every interactive element is labeled
-
 ## Environment Variables
 
 | Variable | Description |
 |----------|-------------|
 | `GEMINI_API_KEY` | Google Gemini API key (in `backend/.env`) |
 
-Get your key at: https://aistudio.google.com/apikey
+Get your free API key at: https://aistudio.google.com/apikey
 
 ## License
 
