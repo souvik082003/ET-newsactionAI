@@ -1,5 +1,13 @@
 # ET NewsAction AI — ET Hackathon 2026 (PS8)
 
+<div align="center">
+  <a href="./README.md"><strong>📖 Readme</strong></a> &nbsp;&nbsp;|&nbsp;&nbsp;
+  <a href="./architecture.md"><strong>🏗️ Architecture</strong></a> &nbsp;&nbsp;|&nbsp;&nbsp;
+  <a href="./impact.md"><strong>📊 Impact Model</strong></a> &nbsp;&nbsp;|&nbsp;&nbsp;
+  <a href="https://youtu.be/your-video-link"><strong>🎥 Video Pitch</strong></a>
+</div>
+<br>
+
 > **Turn News Into Action. For Everyone.**
 
 ## Problem Statement
