@@ -10,24 +10,33 @@ function loadHistory() {
   } catch { return []; }
 }
 
-export function saveToHistory(articleInfo) {
+export function saveFullHistory(data) {
   const history = loadHistory();
   const entry = {
     id: Date.now(),
-    title: articleInfo.title,
-    wordCount: articleInfo.word_count,
-    summary: articleInfo.summary,
+    title: data.articleInfo.title,
+    wordCount: data.articleInfo.word_count,
+    summary: data.articleInfo.summary,
     timestamp: new Date().toISOString(),
+    articleInfo: data.articleInfo,
+    actions: data.actions,
+    storyArc: data.storyArc,
+    role: data.role,
   };
   const updated = [entry, ...history].slice(0, 10); // keep last 10
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  window.dispatchEvent(new Event('history-updated'));
 }
 
 export default function AnalysisHistory({ onSelectArticle }) {
   const [open, setOpen] = useState(false);
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState(loadHistory);
 
-  useEffect(() => { setHistory(loadHistory()); }, [open]);
+  useEffect(() => {
+    const handleUpdate = () => setHistory(loadHistory());
+    window.addEventListener('history-updated', handleUpdate);
+    return () => window.removeEventListener('history-updated', handleUpdate);
+  }, []);
 
   const clearHistory = () => {
     localStorage.removeItem(STORAGE_KEY);
@@ -39,8 +48,6 @@ export default function AnalysisHistory({ onSelectArticle }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     setHistory(updated);
   };
-
-  if (history.length === 0 && !open) return null;
 
   return (
     <>
@@ -82,7 +89,13 @@ export default function AnalysisHistory({ onSelectArticle }) {
                 <div className="space-y-2">
                   {history.map((item) => (
                     <div key={item.id}
-                      className="bg-white/3 rounded-lg p-3 border border-white/5 hover:border-orange-500/20 transition group">
+                      onClick={() => {
+                        if (item.articleInfo && onSelectArticle) {
+                          onSelectArticle(item);
+                          setOpen(false);
+                        }
+                      }}
+                      className={`bg-white/3 rounded-lg p-3 border border-white/5 transition group ${item.articleInfo ? 'hover:border-orange-500/50 cursor-pointer' : 'hover:border-white/10'}`}>
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
                           <h4 className="text-xs font-semibold text-slate-200 truncate">{item.title}</h4>
@@ -95,7 +108,7 @@ export default function AnalysisHistory({ onSelectArticle }) {
                             <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">{item.summary}</p>
                           )}
                         </div>
-                        <button onClick={() => deleteItem(item.id)}
+                        <button onClick={(e) => { e.stopPropagation(); deleteItem(item.id); }}
                           className="opacity-0 group-hover:opacity-100 transition btn-ghost text-xs p-1"
                           aria-label="Delete entry"><Trash2 size={11} /></button>
                       </div>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import AccessibilityBar from './components/AccessibilityBar';
-import AnalysisHistory, { saveToHistory } from './components/AnalysisHistory';
+import AnalysisHistory, { saveFullHistory } from './components/AnalysisHistory';
 import LoadingScreen from './components/LoadingScreen';
 import Home from './pages/Home';
 import Results from './pages/Results';
@@ -27,18 +27,20 @@ export default function App() {
       setArticleInfo(processData);
       setSessionId(processData.session_id);
 
-      // Save to history
-      saveToHistory(processData);
-
-      const { data: actionsData } = await axios.post(`${API}/actions`, {
-        session_id: processData.session_id, role: selectedRole,
-      });
+      const [{ data: actionsData }, { data: arcData }] = await Promise.all([
+        axios.post(`${API}/actions`, { session_id: processData.session_id, role: selectedRole }),
+        axios.post(`${API}/story-arc`, { session_id: processData.session_id }).catch(() => ({ data: null }))
+      ]);
       setActions(actionsData);
+      setStoryArc(arcData);
 
-      // Story arc (non-blocking)
-      axios.post(`${API}/story-arc`, { session_id: processData.session_id })
-        .then(({ data }) => setStoryArc(data))
-        .catch(() => {});
+      // Save full generation state to history
+      saveFullHistory({
+        articleInfo: processData,
+        actions: actionsData,
+        storyArc: arcData,
+        role: selectedRole
+      });
 
       setView('results');
     } catch (err) {
@@ -79,7 +81,13 @@ export default function App() {
               </span>
             </h1>
             <div className="flex items-center gap-2">
-              <AnalysisHistory />
+              <AnalysisHistory onSelectArticle={(item) => {
+                setArticleInfo(item.articleInfo);
+                setActions(item.actions);
+                setStoryArc(item.storyArc);
+                setRole(item.role);
+                setView('results');
+              }} />
               <AccessibilityBar />
             </div>
           </div>

@@ -56,7 +56,7 @@ class LLMEngine:
         if not api_key:
             raise RuntimeError("GEMINI_API_KEY is not set in .env")
         self._client = genai.Client(api_key=api_key)
-        self._model = "gemini-2.5-flash-lite"
+        self._model = "gemini-3.1-flash-lite-preview"
 
     def _call(self, system: str, user: str) -> str:
         """Make a single Gemini API call."""
@@ -79,17 +79,40 @@ class LLMEngine:
         return self._call(system, user)
 
     def generate_all_actions(self, role: str, chunks_per_question: dict[str, list[str]]) -> dict:
-        """Generate answers for all 4 standard questions."""
+        """Generate answers for all 4 standard questions in a single LLM call to save API quota."""
         role_label = ROLE_LABELS.get(role, role)
+        
+        # Combine all unique chunks into one context block to save tokens
+        all_chunks = []
+        for chunks in chunks_per_question.values():
+            all_chunks.extend(chunks)
+        
+        unique_chunks = list(dict.fromkeys(all_chunks))
+        context = "\n\n".join(unique_chunks)[:10000]
+        
+        system = (
+            f"You are ET NewsAction AI helping a {role_label} understand business news.\n"
+            "Return ONLY a raw JSON object with these exact 4 string keys:\n"
+            "   \"affected\": Who is affected and how?\n"
+            "   \"meaning\": What this means in simple terms?\n"
+            "   \"actions\": Numbered step-by-step actions to take right now.\n"
+            "   \"risks\": Risks if ignored.\n"
+            "Keep each answer under 150 words and use bullet points where helpful. "
+            "Ensure the output strictly conforms to valid JSON format."
+        )
+        user = f"ARTICLE CONTEXT:\n{context}\n\nReturn JSON ONLY."
+        
+        res = self._parse_json(self._call(system, user))
+        
         keys = ["affected", "meaning", "actions", "risks"]
-        results = {}
-
-        for key, q_template in zip(keys, STANDARD_QUESTIONS):
-            question = q_template.format(role=role_label)
-            chunks = chunks_per_question.get(key, [])
-            results[key] = self.generate_action(question, role, chunks)
-
-        return results
+        if not isinstance(res, dict) or not all(k in res for k in keys):
+            # Fallback if the LLM output fails to parse perfectly
+            backup_res = {}
+            for k in keys:
+                backup_res[k] = res.get(k, "Failed to parse API response. Please retry.") if isinstance(res, dict) else "Failed to parse API response. Please retry."
+            return backup_res
+            
+        return res
 
     def generate_summary(self, chunks: list[str], title: str) -> str:
         """Generate a 2-sentence plain English summary of the article."""

@@ -307,4 +307,4 @@ async def delete_session(session_id: str):
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "model": "gemini-2.5-flash", "app": "ET NewsAction AI"}
+    return {"status": "ok", "model": "gemini-3.1-flash-lite-preview", "app": "ET NewsAction AI"}
