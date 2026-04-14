@@ -125,32 +125,76 @@ export default function VideoStudio({ articleInfo, actions, onClose }) {
           ET AI Video Studio
         </div>
 
-        {/* Main Content Area */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-12 text-center h-full">
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={slide}
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
-              transition={{ duration: 0.6 }}
-              className="max-w-3xl"
-            >
-              <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight drop-shadow-lg">
-                {currentSlide.title}
-              </h2>
-              
-              {currentSlide.type === 'intro' && (
-                <div className="w-24 h-1 bg-orange-500 mx-auto rounded-full mb-6" />
+        {/* Main Content Area - Split View for AI Avatar & Context */}
+        <div className="relative z-10 flex-1 flex flex-col md:flex-row items-center justify-center p-8 md:p-12 h-full gap-8">
+          
+          {/* AI Avatar / Anchor Visualizer */}
+          <div className="flex-1 flex flex-col items-center justify-center relative h-full">
+            <div className={`relative w-48 h-48 md:w-80 md:h-80 rounded-full border-4 ${isPlaying ? 'border-orange-500 shadow-[0_0_60px_rgba(249,115,22,0.8)]' : 'border-slate-700 shadow-xl'} transition-all duration-500 overflow-hidden`}>
+              {/* Dynamic generated image as the AI representation */}
+              <img 
+                src="/ai_avatar.png" 
+                alt="AI Neural Core Anchor" 
+                className={`w-full h-full object-cover transition-transform duration-[4000ms] ${isPlaying ? 'scale-110' : 'scale-100'}`} 
+              />
+              <div className="absolute inset-0 bg-blue-900/10 mix-blend-overlay pointer-events-none"></div>
+              {/* Outer pulsing ring when speaking */}
+              {isPlaying && (
+                <div className="absolute inset-0 rounded-full animate-ping bg-orange-500/20 pointer-events-none" style={{ animationDuration: '3s' }}></div>
               )}
+            </div>
+            
+            {isPlaying && (
+              <div className="mt-6 md:mt-8 flex gap-2 h-8 items-center justify-center">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="w-1.5 bg-orange-500 rounded-full animate-pulse" 
+                    style={{ 
+                      height: `${Math.random() * 24 + 8}px`, 
+                      animationDelay: `${i * 0.15}s`,
+                      animationDuration: '0.4s'
+                    }} 
+                  />
+                ))}
+              </div>
+            )}
+            {!isPlaying && (
+              <div className="mt-6 md:mt-8 text-white/40 uppercase tracking-widest text-xs md:text-sm font-bold">
+                AI Standby
+              </div>
+            )}
+          </div>
+          
+          {/* Full Context Display */}
+          <div className="flex-1 h-full flex flex-col justify-center text-left max-w-xl pb-16 md:pb-0">
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={slide}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.6 }}
+                className="bg-slate-900/80 backdrop-blur-xl p-6 md:p-8 rounded-2xl border border-white/10 shadow-2xl"
+              >
+                <div className="text-orange-500 text-xs md:text-sm font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                  Full Context Analysis
+                </div>
+                <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4 md:mb-6 leading-tight drop-shadow-md">
+                  {currentSlide.title}
+                </h2>
+                
+                {currentSlide.type === 'intro' && (
+                  <div className="w-16 h-1 bg-orange-500 rounded-full mb-6" />
+                )}
 
-              {currentSlide.content && (
-                <p className="text-xl md:text-2xl text-slate-200/90 leading-relaxed font-medium">
-                  {currentSlide.content}
-                </p>
-              )}
-            </motion.div>
-          </AnimatePresence>
+                {currentSlide.content && (
+                  <div className="text-base md:text-lg text-slate-300 leading-relaxed font-medium bg-black/20 p-4 rounded-lg border border-white/5 shadow-inner">
+                    {currentSlide.content}
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* Subtitles Overlay */}

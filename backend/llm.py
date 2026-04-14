@@ -59,16 +59,29 @@ class LLMEngine:
         self._model = "gemini-3.1-flash-lite-preview"
 
     def _call(self, system: str, user: str) -> str:
-        """Make a single Gemini API call."""
-        response = self._client.models.generate_content(
-            model=self._model,
-            contents=user,
-            config=genai.types.GenerateContentConfig(
-                system_instruction=system,
-                max_output_tokens=1024,
-            ),
-        )
-        return response.text
+        """Make a single Gemini API call with retry logic for 503/429 errors."""
+        import time
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = self._client.models.generate_content(
+                    model=self._model,
+                    contents=user,
+                    config=genai.types.GenerateContentConfig(
+                        system_instruction=system,
+                        max_output_tokens=1024,
+                    ),
+                )
+                return response.text
+            except Exception as e:
+                error_str = str(e)
+                if "503" in error_str or "429" in error_str or "UNAVAILABLE" in error_str:
+                    if attempt < max_retries - 1:
+                        time.sleep(1.5 ** attempt)  # 1s, 1.5s
+                        continue
+                print(f"Gemini API Error on attempt {attempt+1}: {error_str}")
+                # Fallback to avoid complete crashes
+                return "{}"
 
     def generate_action(self, question: str, role: str, chunks: list[str]) -> str:
         """Generate a single action response from retrieved chunks."""
