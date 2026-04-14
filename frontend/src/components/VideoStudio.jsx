@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Play, Square, FastForward, Rewind, Volume2 } from 'lucide-react';
 import { useVoice } from '../hooks/useVoice';
+import JournalistAvatar from './JournalistAvatar';
 
 export default function VideoStudio({ articleInfo, actions, onClose }) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -9,57 +10,45 @@ export default function VideoStudio({ articleInfo, actions, onClose }) {
   const { speak, stopSpeaking } = useVoice();
   const slideTimer = useRef(null);
 
-  // Construct our "Video Script" storyboard from the RAG data
   const STORYBOARD = [
     {
       type: "intro",
       title: articleInfo.title || "Breaking News",
-      subtitle: "AI News Video Studio Brief",
       script: `Here is your breaking news brief on ${articleInfo.title || "the latest Economic Times story"}.`,
-      bg: "from-blue-900/40 to-slate-900/90",
+      photo: "/cinematic_studio.png"
     },
     {
       type: "meaning",
       title: "What This Means",
-      content: actions.meaning,
       script: actions.meaning || "The implications are currently being analyzed.",
-      bg: "from-orange-900/40 to-slate-900/90",
+      photo: "/cinematic_data.png"
     },
     {
       type: "affected",
       title: "Who Is Affected",
-      content: actions.affected,
       script: actions.affected || "Stakeholder analysis pending.",
-      bg: "from-purple-900/40 to-slate-900/90",
+      photo: "/cinematic_data.png"
     },
     {
       type: "actions",
       title: "Recommended Actions",
-      content: actions.actions,
       script: "Here is what you need to do. " + (actions.actions || "Maintain monitoring."),
-      bg: "from-emerald-900/40 to-slate-900/90",
+      photo: "/cinematic_insight.png"
     },
     {
       type: "outro",
       title: "Risks & Outlook",
-      content: actions.risks,
       script: (actions.risks || "No severe risks identified.") + " This concludes your brief.",
-      bg: "from-red-900/40 to-slate-900/90",
+      photo: "/cinematic_risk.png"
     }
   ];
 
   const currentSlide = STORYBOARD[slide];
 
-  // Auto-play orchestrator
   useEffect(() => {
     if (isPlaying) {
-      // 1. Speak the script
       speak(currentSlide.script);
-
-      // 2. Estimate time to read (rough heuristic: 150 words per min = 2.5 words/sec -> meaning length / 5 chars per word / 2.5 ~ length * 0.08)
-      // Cap at min 4s, max 15s
-      const holdTimeMs = Math.max(4000, Math.min(15000, (currentSlide.script.length * 80) + 1000));
-
+      const holdTimeMs = Math.max(5000, Math.min(18000, (currentSlide.script.length * 80) + 1000));
       slideTimer.current = setTimeout(() => {
         if (slide < STORYBOARD.length - 1) {
           setSlide(s => s + 1);
@@ -72,7 +61,6 @@ export default function VideoStudio({ articleInfo, actions, onClose }) {
       stopSpeaking();
       clearTimeout(slideTimer.current);
     }
-
     return () => {
       stopSpeaking();
       clearTimeout(slideTimer.current);
@@ -89,149 +77,114 @@ export default function VideoStudio({ articleInfo, actions, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 md:p-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-3xl p-4 md:p-10">
       
-      {/* Video Container */}
+      {/* Immersive Video Container - Split View Layout */}
       <motion.div 
-        initial={{ scale: 0.9, opacity: 0 }} 
+        initial={{ scale: 0.95, opacity: 0 }} 
         animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="relative w-full max-w-5xl aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-orange-500/20 bg-slate-950 flex flex-col"
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="relative w-full h-full md:max-w-7xl md:aspect-[21/9] rounded-3xl overflow-hidden shadow-2xl bg-slate-900 border border-slate-700 flex flex-col md:flex-row"
       >
-        {/* Dynamic Background */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${currentSlide.bg} transition-colors duration-1000 opacity-60`} />
-        
-        {/* Playback Progress Bar */}
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-white/10 z-20 flex gap-1 px-1 pt-1">
+        {/* Progress Bar */}
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-800 z-30 flex">
           {STORYBOARD.map((_, i) => (
-            <div key={i} className="h-full flex-1 bg-white/10 rounded-full overflow-hidden">
+            <div key={i} className="h-full flex-1 border-r border-slate-900">
               <div 
                 className={`h-full bg-orange-500 transition-all ${
-                  i < slide ? 'w-full' : i === slide && isPlaying ? 'w-full duration-[10000ms] ease-linear' : 'w-0'
+                  i < slide ? 'w-full' : i === slide && isPlaying ? 'w-full duration-[18000ms] ease-linear' : 'w-0'
                 }`} 
               />
             </div>
           ))}
         </div>
 
-        {/* Close Button */}
-        <button onClick={handleClose} className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/40 hover:bg-black/80 text-white transition-colors">
-          <X size={24} />
-        </button>
-
-        {/* Studio Branding */}
-        <div className="absolute top-6 left-6 z-20 text-white/50 font-bold uppercase tracking-[0.2em] text-xs flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-          ET AI Video Studio
-        </div>
-
-        {/* Main Content Area - Split View for AI Avatar & Context */}
-        <div className="relative z-10 flex-1 flex flex-col md:flex-row items-center justify-center p-8 md:p-12 h-full gap-8">
-          
-          {/* AI Avatar / Anchor Visualizer */}
-          <div className="flex-1 flex flex-col items-center justify-center relative h-full">
-            <div className={`relative w-48 h-48 md:w-80 md:h-80 rounded-full border-4 ${isPlaying ? 'border-orange-500 shadow-[0_0_60px_rgba(249,115,22,0.8)]' : 'border-slate-700 shadow-xl'} transition-all duration-500 overflow-hidden`}>
-              {/* Dynamic generated image as the AI representation */}
-              <img 
-                src="/ai_avatar.png" 
-                alt="AI Neural Core Anchor" 
-                className={`w-full h-full object-cover transition-transform duration-[4000ms] ${isPlaying ? 'scale-110' : 'scale-100'}`} 
-              />
-              <div className="absolute inset-0 bg-blue-900/10 mix-blend-overlay pointer-events-none"></div>
-              {/* Outer pulsing ring when speaking */}
-              {isPlaying && (
-                <div className="absolute inset-0 rounded-full animate-ping bg-orange-500/20 pointer-events-none" style={{ animationDuration: '3s' }}></div>
-              )}
-            </div>
-            
-            {isPlaying && (
-              <div className="mt-6 md:mt-8 flex gap-2 h-8 items-center justify-center">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="w-1.5 bg-orange-500 rounded-full animate-pulse" 
-                    style={{ 
-                      height: `${Math.random() * 24 + 8}px`, 
-                      animationDelay: `${i * 0.15}s`,
-                      animationDuration: '0.4s'
-                    }} 
-                  />
-                ))}
-              </div>
-            )}
-            {!isPlaying && (
-              <div className="mt-6 md:mt-8 text-white/40 uppercase tracking-widest text-xs md:text-sm font-bold">
-                AI Standby
-              </div>
-            )}
+        {/* Left Side: Avatar Journalist */}
+        <div className="relative flex-1 md:flex-none md:w-[35%] h-full flex flex-col items-center justify-center bg-slate-800/80 p-8 border-r border-slate-700/50">
+           {/* Header Info */}
+           <div className="absolute top-6 left-6 z-30 text-white/50 font-bold uppercase tracking-widest text-xs flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-red-500 animate-pulse' : 'bg-slate-500'}`} />
+            SYNTHETIC ANCHOR
           </div>
           
-          {/* Full Context Display */}
-          <div className="flex-1 h-full flex flex-col justify-center text-left max-w-xl pb-16 md:pb-0">
+          <JournalistAvatar isTalking={isPlaying} />
+          
+          {isPlaying && (
+            <div className="mt-8 flex gap-1.5 h-6 items-center justify-center">
+              {[...Array(16)].map((_, i) => (
+                <div key={i} className="w-1.5 bg-orange-500 rounded-full animate-pulse" 
+                  style={{ 
+                    height: `${Math.random() * 20 + 8}px`, 
+                    animationDelay: `${i * 0.1}s`,
+                    animationDuration: '0.4s'
+                  }} 
+                />
+              ))}
+            </div>
+          )}
+          {!isPlaying && (
+            <div className="mt-8 text-white/30 uppercase tracking-widest text-sm font-bold">
+              Standby Mode
+            </div>
+          )}
+        </div>
+
+        {/* Right Side: Information / Photo Show */}
+        <div className="relative flex-1 h-full flex flex-col justify-center p-8 md:p-14 bg-gradient-to-br from-slate-900 to-slate-950 overflow-y-auto">
+            <button onClick={handleClose} className="absolute top-6 right-6 p-2 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white transition-all z-40">
+              <X size={20} />
+            </button>
+            
             <AnimatePresence mode="wait">
               <motion.div 
                 key={slide}
-                initial={{ opacity: 0, x: 50 }}
+                initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.6 }}
-                className="bg-slate-900/80 backdrop-blur-xl p-6 md:p-8 rounded-2xl border border-white/10 shadow-2xl"
+                exit={{ opacity: 0, x: -20, filter: "blur(5px)" }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="max-w-2xl mx-auto w-full pb-16 md:pb-0"
               >
-                <div className="text-orange-500 text-xs md:text-sm font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                  Full Context Analysis
+                <div className="inline-block mb-3 px-3 py-1 bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-bold uppercase tracking-widest rounded">
+                  {currentSlide.type === 'intro' ? 'Breaking Context' : 'Visual Summary'}
                 </div>
-                <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4 md:mb-6 leading-tight drop-shadow-md">
+                
+                <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight drop-shadow-md">
                   {currentSlide.title}
                 </h2>
                 
-                {currentSlide.type === 'intro' && (
-                  <div className="w-16 h-1 bg-orange-500 rounded-full mb-6" />
-                )}
-
-                {currentSlide.content && (
-                  <div className="text-base md:text-lg text-slate-300 leading-relaxed font-medium bg-black/20 p-4 rounded-lg border border-white/5 shadow-inner">
-                    {currentSlide.content}
+                {/* Dynamically Loaded Photo Viewer */}
+                {currentSlide.photo && (
+                  <div className="w-full aspect-[21/9] bg-slate-950 rounded-2xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.5)] mb-6 border border-slate-700/50 relative">
+                     <img 
+                       src={currentSlide.photo} 
+                       alt={currentSlide.title} 
+                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-[20000ms] scale-105 hover:scale-125" 
+                     />
+                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
                   </div>
                 )}
+
+                <div className="text-lg md:text-xl text-slate-300 leading-relaxed font-medium bg-slate-800/40 p-6 rounded-xl border border-slate-700/50 shadow-inner">
+                  {currentSlide.script}
+                </div>
               </motion.div>
             </AnimatePresence>
-          </div>
-        </div>
-
-        {/* Subtitles Overlay */}
-        {isPlaying && (
-          <div className="absolute bottom-24 left-0 w-full px-12 z-20 text-center pointer-events-none">
-            <span className="bg-black/60 text-yellow-300 px-4 py-2 rounded text-lg font-medium drop-shadow-md inline-block">
-              {currentSlide.script}
-            </span>
-          </div>
-        )}
-
-        {/* Controls Bar */}
-        <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-black/90 to-transparent z-20 flex items-center justify-between px-10">
-          <div className="flex gap-4">
-            <button onClick={() => setSlide(Math.max(0, slide - 1))} className="text-white/70 hover:text-white transition-colors">
-              <Rewind size={24} />
-            </button>
-            <button onClick={togglePlay} className="text-orange-400 hover:text-orange-300 transition-colors drop-shadow-lg">
-              {isPlaying ? <Square size={32} /> : <Play fill="currentColor" size={32} />}
-            </button>
-            <button onClick={() => setSlide(Math.min(STORYBOARD.length - 1, slide + 1))} className="text-white/70 hover:text-white transition-colors">
-              <FastForward size={24} />
-            </button>
-          </div>
-
-          {/* Audio Visualization mock */}
-          <div className="flex items-center gap-3">
-            <Volume2 className={isPlaying ? 'text-orange-400 animate-pulse' : 'text-white/30'} size={20} />
-            <div className="flex gap-1 h-4 items-center">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className={`w-1 bg-orange-500 rounded-full ${isPlaying ? 'animate-bounce' : 'h-1'}`} 
-                  style={{ height: isPlaying ? `${Math.random() * 16 + 4}px` : '4px', animationDelay: `${i * 0.1}s` }} />
-              ))}
+            
+            {/* Playback Controls Footer */}
+            <div className="fixed md:absolute bottom-8 right-8 z-50 flex items-center justify-end gap-5 px-6 py-3 bg-slate-800/90 backdrop-blur-xl rounded-full border border-slate-600 shadow-2xl">
+              <button onClick={() => setSlide(Math.max(0, slide - 1))} className="text-slate-400 hover:text-white transition-colors">
+                <Rewind size={20} />
+              </button>
+              
+              <button onClick={togglePlay} className="text-orange-400 hover:scale-110 hover:text-orange-300 transition-all">
+                {isPlaying ? <Square size={28} /> : <Play fill="currentColor" size={28} />}
+              </button>
+              
+              <button onClick={() => setSlide(Math.min(STORYBOARD.length - 1, slide + 1))} className="text-slate-400 hover:text-white transition-colors">
+                <FastForward size={20} />
+              </button>
             </div>
-          </div>
         </div>
-
       </motion.div>
     </div>
   );
